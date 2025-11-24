@@ -9,6 +9,8 @@ class Reports extends MY_Controller
         parent::__construct();
         $this->load->model('Invoices_model');
         $this->load->model('Payments_model');
+        $this->load->model('Purchases_model');
+        $this->load->model('Expenses_model');
     }
 
     public function index()
@@ -180,6 +182,48 @@ class Reports extends MY_Controller
 
         $this->load->view('templates/header', $data);
         $this->load->view('reports/outstanding', $data);
+        $this->load->view('templates/footer');
+    }
+    public function profit_loss()
+    {
+        $data['title'] = 'Profit & Loss Report';
+        $user_id = $this->session->userdata('user_id');
+
+        $start_date = $this->input->get('start_date') ?: date('Y-m-01');
+        $end_date = $this->input->get('end_date') ?: date('Y-m-t');
+
+        $data['start_date'] = $start_date;
+        $data['end_date'] = $end_date;
+
+        // 1. Total Income (Sales)
+        // We use Grand Total of Invoices (Accrual Basis) or Payments (Cash Basis)?
+        // Let's stick to Accrual (Invoiced Amount) for P&L usually, but user might prefer Cash.
+        // For simplicity and consistency with "Sales", we use Invoice Grand Totals.
+        $this->db->select_sum('grand_total');
+        $this->db->where('user_id', $user_id);
+        $this->db->where('invoice_date >=', $start_date);
+        $this->db->where('invoice_date <=', $end_date);
+        $this->db->where('status !=', 'Cancelled');
+        $query = $this->db->get('invoices');
+        $data['total_income'] = $query->row()->grand_total ?: 0;
+
+        // 2. Total Purchases (Inventory)
+        $this->db->select_sum('total_amount');
+        $this->db->where('user_id', $user_id);
+        $this->db->where('purchase_date >=', $start_date);
+        $this->db->where('purchase_date <=', $end_date);
+        $this->db->where('status !=', 'Cancelled');
+        $query = $this->db->get('purchases');
+        $data['total_purchases'] = $query->row()->total_amount ?: 0;
+
+        // 3. Total Expenses (Overhead)
+        $data['total_expenses'] = $this->Expenses_model->get_total_expenses($user_id, $start_date, $end_date);
+
+        // 4. Net Profit
+        $data['net_profit'] = $data['total_income'] - $data['total_purchases'] - $data['total_expenses'];
+
+        $this->load->view('templates/header', $data);
+        $this->load->view('reports/profit_loss', $data);
         $this->load->view('templates/footer');
     }
 }

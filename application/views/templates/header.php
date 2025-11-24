@@ -72,6 +72,33 @@
                 class="nav-item <?php echo ($this->uri->segment(1) == 'reports') ? 'active' : ''; ?>">
                 <div class="nav-icon"><i class="fas fa-chart-bar"></i></div> Reports
             </a>
+            <!-- Expenses Dropdown -->
+            <?php
+            $expense_segments = ['expenses', 'reports/profit_loss'];
+            $is_expense_active = in_array($this->uri->segment(1), ['expenses']) || ($this->uri->segment(1) == 'reports' && $this->uri->segment(2) == 'profit_loss');
+            ?>
+            <div class="nav-item nav-item-parent <?php echo $is_expense_active ? 'active' : ''; ?>"
+                onclick="toggleSubmenu('expenseSubmenu')">
+                <div style="display: flex; align-items: center;">
+                    <div class="nav-icon"><i class="fas fa-wallet"></i></div> Purchase & Expenses
+                </div>
+                <i class="fas fa-chevron-down"></i>
+            </div>
+            <div class="nav-submenu <?php echo $is_expense_active ? 'show' : ''; ?>" id="expenseSubmenu">
+                <a href="<?php echo site_url('expenses/create'); ?>"
+                    class="nav-item <?php echo ($this->uri->segment(1) == 'expenses' && $this->uri->segment(2) == 'create') ? 'active' : ''; ?>">
+                    Record Expense
+                </a>
+                <a href="<?php echo site_url('expenses'); ?>"
+                    class="nav-item <?php echo ($this->uri->segment(1) == 'expenses' && $this->uri->segment(2) == '') ? 'active' : ''; ?>">
+                    All Expenses
+                </a>
+                <a href="<?php echo site_url('reports/profit_loss'); ?>"
+                    class="nav-item <?php echo ($this->uri->segment(1) == 'reports' && $this->uri->segment(2) == 'profit_loss') ? 'active' : ''; ?>">
+                    Profit & Loss
+                </a>
+            </div>
+
             <a href="<?php echo site_url('settings'); ?>"
                 class="nav-item <?php echo ($this->uri->segment(1) == 'settings') ? 'active' : ''; ?>">
                 <div class="nav-icon"><i class="fas fa-cog"></i></div> Settings
