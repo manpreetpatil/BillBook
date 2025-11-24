@@ -15,6 +15,7 @@ class Settings extends MY_Controller
         $data['title'] = 'Settings';
         $user_id = $this->session->userdata('user_id');
         $data['settings'] = $this->Settings_model->get_settings($user_id);
+        $data['currencies'] = $this->Settings_model->get_currencies();
 
         $this->load->view('templates/header', $data);
         $this->load->view('settings/index', $data);

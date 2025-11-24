@@ -26,22 +26,26 @@
     <div class="grid" style="margin-bottom: 24px;">
         <div class="card stat-card" style="background-color: #eff6ff;">
             <div class="stat-label">Total Sales</div>
-            <div class="stat-value" style="color: var(--primary-color);">₹ <?php echo number_format($total_sales, 2); ?>
+            <div class="stat-value" style="color: var(--primary-color);"><?php echo $currency_symbol; ?>
+                <?php echo number_format($total_sales, 2); ?>
             </div>
         </div>
         <div class="card stat-card" style="background-color: #f0fdf4;">
             <div class="stat-label">Total Paid</div>
-            <div class="stat-value" style="color: var(--success-color);">₹ <?php echo number_format($total_paid, 2); ?>
+            <div class="stat-value" style="color: var(--success-color);"><?php echo $currency_symbol; ?>
+                <?php echo number_format($total_paid, 2); ?>
             </div>
         </div>
         <div class="card stat-card" style="background-color: #fef3c7;">
             <div class="stat-label">Total Tax</div>
-            <div class="stat-value" style="color: var(--warning-color);">₹ <?php echo number_format($total_tax, 2); ?>
+            <div class="stat-value" style="color: var(--warning-color);"><?php echo $currency_symbol; ?>
+                <?php echo number_format($total_tax, 2); ?>
             </div>
         </div>
         <div class="card stat-card" style="background-color: #fee2e2;">
             <div class="stat-label">Total Due</div>
-            <div class="stat-value" style="color: var(--danger-color);">₹ <?php echo number_format($total_due, 2); ?>
+            <div class="stat-value" style="color: var(--danger-color);"><?php echo $currency_symbol; ?>
+                <?php echo number_format($total_due, 2); ?>
             </div>
         </div>
     </div>
@@ -72,10 +76,11 @@
                             </td>
                             <td><?php echo date('d M Y', strtotime($invoice->invoice_date)); ?></td>
                             <td><?php echo $invoice->customer_name; ?></td>
-                            <td>₹ <?php echo number_format($invoice->grand_total, 2); ?></td>
-                            <td>₹ <?php echo number_format($invoice->tax_total, 2); ?></td>
-                            <td>₹ <?php echo number_format($invoice->paid_amount, 2); ?></td>
-                            <td>₹ <?php echo number_format($invoice->grand_total - $invoice->paid_amount, 2); ?></td>
+                            <td><?php echo $currency_symbol; ?>         <?php echo number_format($invoice->grand_total, 2); ?></td>
+                            <td><?php echo $currency_symbol; ?>         <?php echo number_format($invoice->tax_total, 2); ?></td>
+                            <td><?php echo $currency_symbol; ?>         <?php echo number_format($invoice->paid_amount, 2); ?></td>
+                            <td><?php echo $currency_symbol; ?>
+                                <?php echo number_format($invoice->grand_total - $invoice->paid_amount, 2); ?></td>
                             <td>
                                 <?php
                                 $badge_class = 'badge-info';

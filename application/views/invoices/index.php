@@ -34,7 +34,7 @@
                             <td><?php echo $invoice->customer_name; ?></td>
                             <td><?php echo date('d M Y', strtotime($invoice->invoice_date)); ?></td>
                             <td><?php echo $invoice->due_date ? date('d M Y', strtotime($invoice->due_date)) : 'N/A'; ?></td>
-                            <td>₹ <?php echo number_format($invoice->grand_total, 2); ?></td>
+                            <td><?php echo $currency_symbol; ?>         <?php echo number_format($invoice->grand_total, 2); ?></td>
                             <td>
                                 <?php
                                 $badge_class = 'badge-info';

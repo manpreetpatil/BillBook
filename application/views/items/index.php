@@ -40,7 +40,7 @@
                             <td><?php echo $item->name; ?></td>
                             <td><?php echo $item->description; ?></td>
                             <td><?php echo $item->unit; ?></td>
-                            <td>₹ <?php echo number_format($item->price, 2); ?></td>
+                            <td><?php echo $currency_symbol; ?>         <?php echo number_format($item->price, 2); ?></td>
                             <td><?php echo $item->hsn_sac; ?></td>
                             <td><?php echo $item->tax_rate; ?>%</td>
                             <td>

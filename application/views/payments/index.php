@@ -38,7 +38,7 @@
                                 </a>
                             </td>
                             <td><?php echo $payment->customer_name; ?></td>
-                            <td>₹ <?php echo number_format($payment->amount, 2); ?></td>
+                            <td><?php echo $currency_symbol; ?>         <?php echo number_format($payment->amount, 2); ?></td>
                             <td><?php echo $payment->payment_method; ?></td>
                             <td><?php echo $payment->transaction_id ?: 'N/A'; ?></td>
                             <td>

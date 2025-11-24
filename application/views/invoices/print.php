@@ -216,10 +216,11 @@
                     <tr>
                         <td><?php echo $item->item_name; ?></td>
                         <td><?php echo $item->quantity; ?></td>
-                        <td>₹ <?php echo number_format($item->price, 2); ?></td>
+                        <td><?php echo $currency_symbol; ?>     <?php echo number_format($item->price, 2); ?></td>
                         <td><?php echo $item->tax_rate; ?>%</td>
-                        <td>₹ <?php echo number_format($item->tax_amount, 2); ?></td>
-                        <td class="text-right">₹ <?php echo number_format($item->total, 2); ?></td>
+                        <td><?php echo $currency_symbol; ?>     <?php echo number_format($item->tax_amount, 2); ?></td>
+                        <td class="text-right"><?php echo $currency_symbol; ?>     <?php echo number_format($item->total, 2); ?>
+                        </td>
                     </tr>
                 <?php endforeach; ?>
             </tbody>
@@ -228,15 +229,15 @@
         <div class="totals">
             <div class="totals-row">
                 <span>Subtotal:</span>
-                <span>₹ <?php echo number_format($invoice->subtotal, 2); ?></span>
+                <span><?php echo $currency_symbol; ?> <?php echo number_format($invoice->subtotal, 2); ?></span>
             </div>
             <div class="totals-row">
                 <span>Tax:</span>
-                <span>₹ <?php echo number_format($invoice->tax_total, 2); ?></span>
+                <span><?php echo $currency_symbol; ?> <?php echo number_format($invoice->tax_total, 2); ?></span>
             </div>
             <div class="totals-row grand">
                 <span>Grand Total:</span>
-                <span>₹ <?php echo number_format($invoice->grand_total, 2); ?></span>
+                <span><?php echo $currency_symbol; ?> <?php echo number_format($invoice->grand_total, 2); ?></span>
             </div>
         </div>
 

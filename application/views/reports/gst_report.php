@@ -38,16 +38,18 @@
                     <?php foreach ($tax_summary as $rate => $data): ?>
                         <tr>
                             <td><?php echo $rate; ?>%</td>
-                            <td>₹ <?php echo number_format($data['taxable_amount'], 2); ?></td>
-                            <td>₹ <?php echo number_format($data['tax_amount'], 2); ?></td>
-                            <td>₹ <?php echo number_format($data['taxable_amount'] + $data['tax_amount'], 2); ?></td>
+                            <td><?php echo $currency_symbol; ?>         <?php echo number_format($data['taxable_amount'], 2); ?></td>
+                            <td><?php echo $currency_symbol; ?>         <?php echo number_format($data['tax_amount'], 2); ?></td>
+                            <td><?php echo $currency_symbol; ?>
+                                <?php echo number_format($data['taxable_amount'] + $data['tax_amount'], 2); ?></td>
                         </tr>
                     <?php endforeach; ?>
                     <tr style="font-weight: 700; background-color: #f8fafc;">
                         <td>TOTAL</td>
-                        <td>₹ <?php echo number_format($total_taxable, 2); ?></td>
-                        <td>₹ <?php echo number_format($total_tax, 2); ?></td>
-                        <td>₹ <?php echo number_format($total_taxable + $total_tax, 2); ?></td>
+                        <td><?php echo $currency_symbol; ?>     <?php echo number_format($total_taxable, 2); ?></td>
+                        <td><?php echo $currency_symbol; ?>     <?php echo number_format($total_tax, 2); ?></td>
+                        <td><?php echo $currency_symbol; ?>     <?php echo number_format($total_taxable + $total_tax, 2); ?>
+                        </td>
                     </tr>
                 <?php else: ?>
                     <tr>
@@ -83,9 +85,10 @@
                             <td><?php echo $item->customer_name; ?></td>
                             <td><?php echo $item->gstin ?: 'N/A'; ?></td>
                             <td><?php echo $item->item_name; ?></td>
-                            <td>₹ <?php echo number_format($item->quantity * $item->price, 2); ?></td>
+                            <td><?php echo $currency_symbol; ?>         <?php echo number_format($item->quantity * $item->price, 2); ?>
+                            </td>
                             <td><?php echo $item->tax_rate; ?>%</td>
-                            <td>₹ <?php echo number_format($item->tax_amount, 2); ?></td>
+                            <td><?php echo $currency_symbol; ?>         <?php echo number_format($item->tax_amount, 2); ?></td>
                         </tr>
                     <?php endforeach; ?>
                 <?php else: ?>

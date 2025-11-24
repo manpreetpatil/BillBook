@@ -1,12 +1,13 @@
 <div class="grid">
     <div class="card stat-card">
         <div class="stat-label">Total Sales</div>
-        <div class="stat-value">₹ <?php echo number_format($stats['total_sales'], 2); ?></div>
+        <div class="stat-value"><?php echo $currency_symbol; ?> <?php echo number_format($stats['total_sales'], 2); ?>
+        </div>
         <div class="badge badge-success" style="width: fit-content;">+0% this month</div>
     </div>
     <div class="card stat-card">
         <div class="stat-label">Due Amount</div>
-        <div class="stat-value" style="color: var(--danger-color);">₹
+        <div class="stat-value" style="color: var(--danger-color);"><?php echo $currency_symbol; ?>
             <?php echo number_format($stats['due_amount'], 2); ?>
         </div>
         <div class="badge badge-danger" style="width: fit-content;">Action Needed</div>
@@ -54,7 +55,7 @@
                             </td>
                             <td><?php echo $invoice->customer_name; ?></td>
                             <td><?php echo date('d M Y', strtotime($invoice->invoice_date)); ?></td>
-                            <td>₹ <?php echo number_format($invoice->grand_total, 2); ?></td>
+                            <td><?php echo $currency_symbol; ?>         <?php echo number_format($invoice->grand_total, 2); ?></td>
                             <td>
                                 <?php
                                 $badge_class = 'badge-info';

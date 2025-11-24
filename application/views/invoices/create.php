@@ -53,16 +53,16 @@
             <div style="max-width: 400px; margin-left: auto;">
                 <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
                     <span>Subtotal:</span>
-                    <span id="subtotal">₹ 0.00</span>
+                    <span id="subtotal"><?php echo $currency_symbol; ?> 0.00</span>
                 </div>
                 <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
                     <span>Tax:</span>
-                    <span id="tax">₹ 0.00</span>
+                    <span id="tax"><?php echo $currency_symbol; ?> 0.00</span>
                 </div>
                 <div
                     style="display: flex; justify-content: space-between; font-size: 1.25rem; font-weight: 700; padding-top: 12px; border-top: 2px solid var(--border-color);">
                     <span>Grand Total:</span>
-                    <span id="grandTotal">₹ 0.00</span>
+                    <span id="grandTotal"><?php echo $currency_symbol; ?> 0.00</span>
                 </div>
             </div>
         </div>
@@ -157,7 +157,7 @@
             const taxAmount = (lineTotal * taxRate) / 100;
             const total = lineTotal + taxAmount;
 
-            item.querySelector('.item-total').value = `₹ ${total.toFixed(2)}`;
+            item.querySelector('.item-total').value = `<?php echo $currency_symbol; ?> ${total.toFixed(2)}`;
 
             subtotal += lineTotal;
             taxTotal += taxAmount;
@@ -165,9 +165,9 @@
 
         const grandTotal = subtotal + taxTotal;
 
-        document.getElementById('subtotal').textContent = `₹ ${subtotal.toFixed(2)}`;
-        document.getElementById('tax').textContent = `₹ ${taxTotal.toFixed(2)}`;
-        document.getElementById('grandTotal').textContent = `₹ ${grandTotal.toFixed(2)}`;
+        document.getElementById('subtotal').textContent = `<?php echo $currency_symbol; ?> ${subtotal.toFixed(2)}`;
+        document.getElementById('tax').textContent = `<?php echo $currency_symbol; ?> ${taxTotal.toFixed(2)}`;
+        document.getElementById('grandTotal').textContent = `<?php echo $currency_symbol; ?> ${grandTotal.toFixed(2)}`;
     }
 
     // Add first item by default

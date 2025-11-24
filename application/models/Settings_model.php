@@ -32,4 +32,12 @@ class Settings_model extends CI_Model
             return $this->db->update('settings', $data);
         }
     }
+    /**
+     * Get all available currencies
+     */
+    public function get_currencies()
+    {
+        $query = $this->db->get('currencies');
+        return $query->result();
+    }
 }

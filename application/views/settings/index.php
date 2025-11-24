@@ -50,8 +50,24 @@
 
         <div class="form-group">
             <label class="form-label">Currency</label>
-            <input type="text" name="currency" class="form-control"
-                value="<?php echo isset($settings->currency) ? $settings->currency : 'INR'; ?>">
+            <select name="currency" class="form-control">
+                <?php
+                $current_currency = isset($settings->currency) ? $settings->currency : 'INR (₹)';
+                if (isset($currencies) && !empty($currencies)):
+                    foreach ($currencies as $currency):
+                        $currency_value = $currency->code . ' (' . $currency->symbol . ')';
+                        ?>
+                        <option value="<?php echo $currency_value; ?>" <?php echo ($current_currency == $currency_value) ? 'selected' : ''; ?>>
+                            <?php echo $currency->name . ' - ' . $currency->code . ' (' . $currency->symbol . ')'; ?>
+                        </option>
+                    <?php endforeach;
+                else: ?>
+                    <option value="INR (₹)" <?php echo ($current_currency == 'INR (₹)') ? 'selected' : ''; ?>>Indian Rupee (₹)
+                    </option>
+                    <option value="USD ($)" <?php echo ($current_currency == 'USD ($)') ? 'selected' : ''; ?>>US Dollar ($)
+                    </option>
+                <?php endif; ?>
+            </select>
         </div>
 
         <div class="form-group">

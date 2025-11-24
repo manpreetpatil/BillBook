@@ -22,6 +22,21 @@ class MY_Controller extends CI_Controller
 
         // Load user data
         $this->logged_user = $this->get_logged_user();
+
+        // Load settings and make currency available globally
+        $this->load->model('Settings_model');
+        $settings = $this->Settings_model->get_settings($this->session->userdata('user_id'));
+
+        $currency_symbol = '₹'; // Default
+        if ($settings && !empty($settings->currency)) {
+            $currency_symbol = $settings->currency;
+            // Extract symbol if format is like "USD ($)"
+            if (preg_match('/\((.*?)\)/', $currency_symbol, $match)) {
+                $currency_symbol = $match[1];
+            }
+        }
+
+        $this->load->vars(['currency_symbol' => $currency_symbol]);
     }
 
     protected function get_logged_user()

@@ -48,9 +48,9 @@
                         <tr>
                             <td><?php echo $invoice->invoice_number; ?></td>
                             <td><?php echo date('d M Y', strtotime($invoice->invoice_date)); ?></td>
-                            <td>₹ <?php echo number_format($invoice->grand_total, 2); ?></td>
-                            <td>₹ <?php echo number_format($invoice->paid_amount, 2); ?></td>
-                            <td>₹ <?php echo number_format($balance, 2); ?></td>
+                            <td><?php echo $currency_symbol; ?>         <?php echo number_format($invoice->grand_total, 2); ?></td>
+                            <td><?php echo $currency_symbol; ?>         <?php echo number_format($invoice->paid_amount, 2); ?></td>
+                            <td><?php echo $currency_symbol; ?>         <?php echo number_format($balance, 2); ?></td>
                             <td>
                                 <?php
                                 $badge_class = 'badge-info';
@@ -67,9 +67,10 @@
                     <?php endforeach; ?>
                     <tr style="font-weight: 700; background-color: #f8fafc;">
                         <td colspan="2">TOTAL</td>
-                        <td>₹ <?php echo number_format($total_amount, 2); ?></td>
-                        <td>₹ <?php echo number_format($total_paid, 2); ?></td>
-                        <td>₹ <?php echo number_format($total_amount - $total_paid, 2); ?></td>
+                        <td><?php echo $currency_symbol; ?>     <?php echo number_format($total_amount, 2); ?></td>
+                        <td><?php echo $currency_symbol; ?>     <?php echo number_format($total_paid, 2); ?></td>
+                        <td><?php echo $currency_symbol; ?>     <?php echo number_format($total_amount - $total_paid, 2); ?>
+                        </td>
                         <td></td>
                     </tr>
                 <?php else: ?>

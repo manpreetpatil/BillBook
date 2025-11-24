@@ -10,7 +10,7 @@
         <div style="text-align: center;">
             <div style="color: #991b1b; font-size: 0.9rem; margin-bottom: 8px;">Total Outstanding Amount</div>
             <div style="font-size: 2.5rem; font-weight: 700; color: var(--danger-color);">
-                ₹ <?php echo number_format($total_outstanding, 2); ?>
+                <?php echo $currency_symbol; ?> <?php echo number_format($total_outstanding, 2); ?>
             </div>
         </div>
     </div>
@@ -66,10 +66,10 @@
                                     N/A
                                 <?php endif; ?>
                             </td>
-                            <td>₹ <?php echo number_format($invoice->grand_total, 2); ?></td>
-                            <td>₹ <?php echo number_format($invoice->paid_amount, 2); ?></td>
+                            <td><?php echo $currency_symbol; ?>         <?php echo number_format($invoice->grand_total, 2); ?></td>
+                            <td><?php echo $currency_symbol; ?>         <?php echo number_format($invoice->paid_amount, 2); ?></td>
                             <td style="font-weight: 700; color: var(--danger-color);">
-                                ₹ <?php echo number_format($invoice->balance, 2); ?>
+                                <?php echo $currency_symbol; ?>         <?php echo number_format($invoice->balance, 2); ?>
                             </td>
                             <td>
                                 <?php
