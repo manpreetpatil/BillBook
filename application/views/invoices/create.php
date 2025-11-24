@@ -97,9 +97,10 @@
             <label class="form-label">Item</label>
             <select name="item_id[]" class="form-control item-select" onchange="selectItem(this, ${itemCounter})">
                 <option value="">Select Item</option>
-                ${items.map(item => `<option value="${item.id}" data-price="${item.price}" data-tax="${item.tax_rate}">${item.name}</option>`).join('')}
+                ${items.map(item => `<option value="${item.id}" data-price="${item.price}" data-tax="${item.tax_rate}" data-description="${item.description || ''}">${item.name}</option>`).join('')}
             </select>
             <input type="hidden" name="item_name[]" class="item-name">
+            <input type="text" name="description[]" class="form-control item-description" placeholder="Description (Optional)" style="margin-top: 4px; font-size: 0.85rem;">
         </div>
         <div class="form-group" style="margin-bottom: 0;">
             <label class="form-label">Quantity</label>
@@ -134,6 +135,7 @@
             itemDiv.querySelector('.price').value = option.dataset.price || 0;
             itemDiv.querySelector('.tax-rate').value = option.dataset.tax || 0;
             itemDiv.querySelector('.item-name').value = option.text;
+            itemDiv.querySelector('.item-description').value = option.dataset.description || '';
         }
 
         calculateTotals();

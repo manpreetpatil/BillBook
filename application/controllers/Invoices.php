@@ -60,6 +60,7 @@ class Invoices extends MY_Controller
 
                         $items_data[] = [
                             'item_name' => $item_names[$i],
+                            'description' => $this->input->post('description')[$i],
                             'quantity' => $qty,
                             'price' => $price,
                             'tax_rate' => $tax_rate,

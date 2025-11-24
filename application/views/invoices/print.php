@@ -214,7 +214,12 @@
             <tbody>
                 <?php foreach ($invoice_items as $item): ?>
                     <tr>
-                        <td><?php echo $item->item_name; ?></td>
+                        <td>
+                            <div><?php echo $item->item_name; ?></div>
+                            <?php if (!empty($item->description)): ?>
+                                <div style="font-size: 0.85rem; color: #64748b;"><?php echo $item->description; ?></div>
+                            <?php endif; ?>
+                        </td>
                         <td><?php echo $item->quantity; ?></td>
                         <td><?php echo $currency_symbol; ?>     <?php echo number_format($item->price, 2); ?></td>
                         <td><?php echo $item->tax_rate; ?>%</td>
