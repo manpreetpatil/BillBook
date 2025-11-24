@@ -200,4 +200,20 @@ class Invoices_model extends CI_Model
         ];
         $this->db->insert('inventory_logs', $log_data);
     }
+    public function get_invoice_by_hash($hash)
+    {
+        $this->db->select('invoices.*, customers.name as customer_name, customers.email as customer_email, customers.phone as customer_phone, customers.address as customer_address, users.name as user_name, users.email as user_email');
+        $this->db->from('invoices');
+        $this->db->join('customers', 'customers.id = invoices.customer_id');
+        $this->db->join('users', 'users.id = invoices.user_id');
+        $this->db->where('invoices.share_hash', $hash);
+        $query = $this->db->get();
+        return $query->row();
+    }
+
+    public function update_share_hash($id, $hash)
+    {
+        $this->db->where('id', $id);
+        return $this->db->update('invoices', ['share_hash' => $hash]);
+    }
 }

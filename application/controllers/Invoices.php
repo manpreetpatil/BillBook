@@ -155,4 +155,70 @@ class Invoices extends MY_Controller
         }
         redirect('invoices');
     }
+    public function share($id)
+    {
+        $user_id = $this->session->userdata('user_id');
+        $invoice = $this->Invoices_model->get_invoice($id, $user_id);
+
+        if (!$invoice) {
+            // Return JSON error instead of 404 HTML
+            echo json_encode(['error' => 'Invoice not found']);
+            return;
+        }
+
+        // Generate hash if not exists
+        if (empty($invoice->share_hash)) {
+            $hash = bin2hex(random_bytes(32));
+            $this->Invoices_model->update_share_hash($id, $hash);
+            $invoice->share_hash = $hash;
+        }
+
+        $data['invoice'] = $invoice;
+        $data['share_link'] = site_url('invoices/public_view/' . $invoice->share_hash);
+
+        // Return JSON for modal
+        ob_clean(); // Clean any previous output
+        header('Content-Type: application/json');
+        echo json_encode([
+            'success' => true,
+            'share_link' => $data['share_link'],
+            'whatsapp_link' => 'https://wa.me/?text=' . urlencode('Here is your invoice: ' . $data['share_link']),
+            'email_subject' => 'Invoice #' . $invoice->invoice_number,
+            'email_body' => 'Here is your invoice: ' . $data['share_link']
+        ]);
+    }
+
+    public function public_view($hash)
+    {
+        $data['invoice'] = $this->Invoices_model->get_invoice_by_hash($hash);
+
+        if (!$data['invoice']) {
+            show_404();
+        }
+
+        $data['invoice_items'] = $this->Invoices_model->get_invoice_items($data['invoice']->id);
+        $data['title'] = 'Invoice #' . $data['invoice']->invoice_number;
+
+        // Load settings for the invoice owner
+        $this->load->model('Settings_model');
+        $data['settings'] = $this->Settings_model->get_settings($data['invoice']->user_id);
+
+        $this->load->view('invoices/public_view', $data);
+    }
+
+    public function print_thermal($id)
+    {
+        $user_id = $this->session->userdata('user_id');
+        $data['invoice'] = $this->Invoices_model->get_invoice($id, $user_id);
+
+        if (!$data['invoice']) {
+            show_404();
+        }
+
+        $data['invoice_items'] = $this->Invoices_model->get_invoice_items($id);
+        $this->load->model('Settings_model');
+        $data['settings'] = $this->Settings_model->get_settings($user_id);
+
+        $this->load->view('invoices/print_thermal', $data);
+    }
 }

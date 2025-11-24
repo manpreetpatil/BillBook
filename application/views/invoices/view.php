@@ -2,10 +2,19 @@
     <div class="card-header">
         <div class="card-title">Invoice <?php echo $invoice->invoice_number; ?></div>
         <div style="display: flex; gap: 8px;">
-            <a href="<?php echo site_url('invoices/print_invoice/' . $invoice->id); ?>" class="btn btn-primary"
-                target="_blank">
-                <i class="fas fa-print" style="margin-right: 8px;"></i> Print
-            </a>
+            <div style="display: flex; gap: 12px;">
+                <button onclick="shareInvoice(<?php echo $invoice->id; ?>)" class="btn btn-outline">
+                    <i class="fas fa-share-alt" style="margin-right: 8px;"></i> Share
+                </button>
+                <a href="<?php echo site_url('invoices/print_thermal/' . $invoice->id); ?>" target="_blank"
+                    class="btn btn-outline">
+                    <i class="fas fa-receipt" style="margin-right: 8px;"></i> Thermal Print
+                </a>
+                <a href="<?php echo site_url('invoices/print_invoice/' . $invoice->id); ?>" target="_blank"
+                    class="btn btn-primary">
+                    <i class="fas fa-print" style="margin-right: 8px;"></i> Print A4
+                </a>
+            </div>
             <a href="<?php echo site_url('payments/add/' . $invoice->id); ?>" class="btn btn-primary">
                 <i class="fas fa-money-bill-wave" style="margin-right: 8px;"></i> Add Payment
             </a>
@@ -172,3 +181,66 @@
         </div>
     <?php endif; ?>
 </div>
+
+<!-- Share Modal -->
+<div id="shareModal" class="modal"
+    style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); align-items: center; justify-content: center; z-index: 1000;">
+    <div style="background: white; padding: 24px; border-radius: 12px; width: 400px; max-width: 90%;">
+        <h3 style="margin-top: 0;">Share Invoice</h3>
+
+        <div style="margin-bottom: 16px;">
+            <label style="display: block; margin-bottom: 8px; font-weight: 500;">Public Link</label>
+            <div style="display: flex; gap: 8px;">
+                <input type="text" id="shareLink" readonly class="form-control" style="flex: 1;">
+                <button onclick="copyLink()" class="btn btn-outline" title="Copy"><i class="fas fa-copy"></i></button>
+            </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 24px;">
+            <a id="whatsappBtn" href="#" target="_blank" class="btn"
+                style="background: #25D366; color: white; text-align: center;">
+                <i class="fab fa-whatsapp"></i> WhatsApp
+            </a>
+            <a id="emailBtn" href="#" class="btn" style="background: #EA4335; color: white; text-align: center;">
+                <i class="fas fa-envelope"></i> Email
+            </a>
+        </div>
+
+        <div style="text-align: right;">
+            <button onclick="closeShareModal()" class="btn btn-outline">Close</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    function shareInvoice(id) {
+        fetch('<?php echo site_url("invoices/share/"); ?>' + id)
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('shareLink').value = data.share_link;
+                document.getElementById('whatsappBtn').href = data.whatsapp_link;
+                document.getElementById('emailBtn').href = 'mailto:?subject=' + encodeURIComponent(data.email_subject) + '&body=' + encodeURIComponent(data.email_body);
+
+                document.getElementById('shareModal').style.display = 'flex';
+            });
+    }
+
+    function closeShareModal() {
+        document.getElementById('shareModal').style.display = 'none';
+    }
+
+    function copyLink() {
+        var copyText = document.getElementById("shareLink");
+        copyText.select();
+        document.execCommand("copy");
+        alert("Link copied to clipboard!");
+    }
+
+    // Close modal on outside click
+    window.onclick = function (event) {
+        var modal = document.getElementById('shareModal');
+        if (event.target == modal) {
+            modal.style.display = "none";
+        }
+    }
+</script>
