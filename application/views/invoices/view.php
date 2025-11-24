@@ -89,6 +89,7 @@
             <thead>
                 <tr>
                     <th>Item</th>
+                    <th>HSN/SAC</th>
                     <th>Quantity</th>
                     <th>Price</th>
                     <th>Tax Rate</th>
@@ -105,6 +106,7 @@
                                 <div class="text-muted small"><?php echo $item->description; ?></div>
                             <?php endif; ?>
                         </td>
+                        <td><?php echo isset($item->hsn_sac) ? $item->hsn_sac : '-'; ?></td>
                         <td><?php echo $item->quantity; ?></td>
                         <td><?php echo $currency_symbol; ?>     <?php echo number_format($item->price, 2); ?></td>
                         <td><?php echo $item->tax_rate; ?>%</td>
@@ -122,10 +124,23 @@
             <span>Subtotal:</span>
             <span><?php echo $currency_symbol; ?> <?php echo number_format($invoice->subtotal, 2); ?></span>
         </div>
-        <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
-            <span>Tax:</span>
-            <span><?php echo $currency_symbol; ?> <?php echo number_format($invoice->tax_total, 2); ?></span>
-        </div>
+
+        <?php if ($invoice->igst_amount > 0): ?>
+            <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                <span>IGST:</span>
+                <span><?php echo $currency_symbol; ?>     <?php echo number_format($invoice->igst_amount, 2); ?></span>
+            </div>
+        <?php else: ?>
+            <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                <span>CGST:</span>
+                <span><?php echo $currency_symbol; ?>     <?php echo number_format($invoice->cgst_amount, 2); ?></span>
+            </div>
+            <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                <span>SGST:</span>
+                <span><?php echo $currency_symbol; ?>     <?php echo number_format($invoice->sgst_amount, 2); ?></span>
+            </div>
+        <?php endif; ?>
+
         <div
             style="display: flex; justify-content: space-between; font-size: 1.25rem; font-weight: 700; padding-top: 12px; border-top: 2px solid var(--border-color);">
             <span>Grand Total:</span>

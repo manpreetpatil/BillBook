@@ -36,7 +36,8 @@ class Items extends MY_Controller
                     'unit' => $this->input->post('unit'),
                     'price' => $this->input->post('price'),
                     'hsn_sac' => $this->input->post('hsn_sac'),
-                    'tax_rate' => $this->input->post('tax_rate')
+                    'tax_rate' => $this->input->post('tax_rate'),
+                    'tax_type' => $this->input->post('tax_type')
                 ];
 
                 $user_id = $this->session->userdata('user_id');
@@ -75,7 +76,8 @@ class Items extends MY_Controller
                     'unit' => $this->input->post('unit'),
                     'price' => $this->input->post('price'),
                     'hsn_sac' => $this->input->post('hsn_sac'),
-                    'tax_rate' => $this->input->post('tax_rate')
+                    'tax_rate' => $this->input->post('tax_rate'),
+                    'tax_type' => $this->input->post('tax_type')
                 ];
 
                 $user_id = $this->session->userdata('user_id');

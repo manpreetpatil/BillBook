@@ -34,6 +34,7 @@ class Settings extends MY_Controller
             $data = [
                 'company_name' => $this->input->post('company_name'),
                 'address' => $this->input->post('address'),
+                'state' => $this->input->post('state'),
                 'gstin' => $this->input->post('gstin'),
                 'email' => $this->input->post('email'),
                 'phone' => $this->input->post('phone'),

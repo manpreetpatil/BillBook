@@ -1,5 +1,6 @@
 CREATE TABLE `settings` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
+  `user_id` int(11) NOT NULL,
   `company_name` varchar(255) NOT NULL,
   `address` text,
   `gstin` varchar(20) DEFAULT NULL,
@@ -9,22 +10,26 @@ CREATE TABLE `settings` (
   `invoice_prefix` varchar(10) DEFAULT 'INV-',
   `logo` varchar(255) DEFAULT NULL,
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  KEY `user_id` (`user_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 CREATE TABLE `customers` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
+  `user_id` int(11) NOT NULL,
   `name` varchar(255) NOT NULL,
   `email` varchar(100) DEFAULT NULL,
   `phone` varchar(20) DEFAULT NULL,
   `address` text,
   `gstin` varchar(20) DEFAULT NULL,
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  KEY `user_id` (`user_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 CREATE TABLE `items` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
+  `user_id` int(11) NOT NULL,
   `name` varchar(255) NOT NULL,
   `description` text,
   `unit` varchar(20) DEFAULT 'pcs',
@@ -32,11 +37,13 @@ CREATE TABLE `items` (
   `hsn_sac` varchar(20) DEFAULT NULL,
   `tax_rate` decimal(5,2) DEFAULT '0.00',
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  KEY `user_id` (`user_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 CREATE TABLE `invoices` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
+  `user_id` int(11) NOT NULL,
   `invoice_number` varchar(50) NOT NULL,
   `customer_id` int(11) NOT NULL,
   `invoice_date` date NOT NULL,
@@ -48,7 +55,8 @@ CREATE TABLE `invoices` (
   `notes` text,
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `invoice_number` (`invoice_number`),
+  UNIQUE KEY `user_invoice` (`user_id`, `invoice_number`),
+  KEY `user_id` (`user_id`),
   KEY `customer_id` (`customer_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -68,6 +76,7 @@ CREATE TABLE `invoice_items` (
 
 CREATE TABLE `payments` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
+  `user_id` int(11) NOT NULL,
   `invoice_id` int(11) NOT NULL,
   `payment_date` date NOT NULL,
   `amount` decimal(10,2) NOT NULL,
@@ -76,5 +85,23 @@ CREATE TABLE `payments` (
   `notes` text,
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
+  KEY `user_id` (`user_id`),
   KEY `invoice_id` (`invoice_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+CREATE TABLE `users` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `firebase_uid` varchar(255) NOT NULL,
+  `name` varchar(255) NOT NULL,
+  `email` varchar(100) NOT NULL,
+  `phone` varchar(20) DEFAULT NULL,
+  `photo_url` varchar(500) DEFAULT NULL,
+  `email_verified` boolean DEFAULT FALSE,
+  `provider` varchar(50) DEFAULT 'email',
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `firebase_uid` (`firebase_uid`),
+  UNIQUE KEY `email` (`email`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+

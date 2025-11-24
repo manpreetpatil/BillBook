@@ -6,6 +6,12 @@
         </a>
     </div>
 
+    <div style="display: flex; justify-content: flex-end; margin-bottom: 16px;">
+        <a href="<?php echo site_url('reports/outstanding_csv'); ?>" class="btn btn-primary btn-sm">
+            <i class="fas fa-download" style="margin-right: 8px;"></i> Download CSV
+        </a>
+    </div>
+
     <div style="background-color: #fee2e2; padding: 20px; border-radius: 8px; margin-bottom: 24px;">
         <div style="text-align: center;">
             <div style="color: #991b1b; font-size: 0.9rem; margin-bottom: 8px;">Total Outstanding Amount</div>

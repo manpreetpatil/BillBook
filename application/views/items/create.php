@@ -45,6 +45,14 @@
                 <label class="form-label">Tax Rate (%)</label>
                 <input type="number" step="0.01" name="tax_rate" class="form-control" value="0">
             </div>
+
+            <div class="form-group">
+                <label class="form-label">Tax Type</label>
+                <select name="tax_type" class="form-control">
+                    <option value="exclusive">Exclusive (Price + Tax)</option>
+                    <option value="inclusive">Inclusive (Tax included in Price)</option>
+                </select>
+            </div>
         </div>
 
         <div style="display: flex; gap: 12px;">

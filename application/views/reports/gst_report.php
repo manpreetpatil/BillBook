@@ -22,15 +22,27 @@
         </div>
     </form>
 
-    <h3 style="margin-bottom: 16px;">Tax Summary</h3>
+    <div style="display: flex; gap: 12px; margin-bottom: 16px;">
+        <h3 style="margin-bottom: 0;">Tax Summary</h3>
+        <a href="<?php echo site_url('reports/gstr3b_report?start_date=' . $start_date . '&end_date=' . $end_date); ?>"
+            class="btn btn-outline btn-sm">
+            View GSTR-3B Summary
+        </a>
+        <a href="<?php echo site_url('reports/gst_report_csv?start_date=' . $start_date . '&end_date=' . $end_date); ?>"
+            class="btn btn-primary btn-sm">
+            <i class="fas fa-download" style="margin-right: 8px;"></i> Download CSV
+        </a>
+    </div>
     <div class="table-container" style="margin-bottom: 32px;">
         <table class="table">
             <thead>
                 <tr>
                     <th>Tax Rate</th>
                     <th>Taxable Amount</th>
-                    <th>Tax Amount</th>
-                    <th>Total</th>
+                    <th>CGST</th>
+                    <th>SGST</th>
+                    <th>IGST</th>
+                    <th>Total Tax</th>
                 </tr>
             </thead>
             <tbody>
@@ -39,21 +51,23 @@
                         <tr>
                             <td><?php echo $rate; ?>%</td>
                             <td><?php echo $currency_symbol; ?>         <?php echo number_format($data['taxable_amount'], 2); ?></td>
+                            <td><?php echo $currency_symbol; ?>         <?php echo number_format($data['cgst_amount'], 2); ?></td>
+                            <td><?php echo $currency_symbol; ?>         <?php echo number_format($data['sgst_amount'], 2); ?></td>
+                            <td><?php echo $currency_symbol; ?>         <?php echo number_format($data['igst_amount'], 2); ?></td>
                             <td><?php echo $currency_symbol; ?>         <?php echo number_format($data['tax_amount'], 2); ?></td>
-                            <td><?php echo $currency_symbol; ?>
-                                <?php echo number_format($data['taxable_amount'] + $data['tax_amount'], 2); ?></td>
                         </tr>
                     <?php endforeach; ?>
                     <tr style="font-weight: 700; background-color: #f8fafc;">
                         <td>TOTAL</td>
                         <td><?php echo $currency_symbol; ?>     <?php echo number_format($total_taxable, 2); ?></td>
+                        <td><?php echo $currency_symbol; ?>     <?php echo number_format($total_cgst, 2); ?></td>
+                        <td><?php echo $currency_symbol; ?>     <?php echo number_format($total_sgst, 2); ?></td>
+                        <td><?php echo $currency_symbol; ?>     <?php echo number_format($total_igst, 2); ?></td>
                         <td><?php echo $currency_symbol; ?>     <?php echo number_format($total_tax, 2); ?></td>
-                        <td><?php echo $currency_symbol; ?>     <?php echo number_format($total_taxable + $total_tax, 2); ?>
-                        </td>
                     </tr>
                 <?php else: ?>
                     <tr>
-                        <td colspan="4" style="text-align: center; color: var(--text-light);">No tax data for selected
+                        <td colspan="6" style="text-align: center; color: var(--text-light);">No tax data for selected
                             period.</td>
                     </tr>
                 <?php endif; ?>
@@ -61,7 +75,7 @@
         </table>
     </div>
 
-    <h3 style="margin-bottom: 16px;">Detailed Transactions</h3>
+    <h3 style="margin-bottom: 16px;">Detailed Transactions (GSTR-1)</h3>
     <div class="table-container">
         <table class="table">
             <thead>
@@ -70,10 +84,12 @@
                     <th>Invoice #</th>
                     <th>Customer</th>
                     <th>GSTIN</th>
-                    <th>Item</th>
+                    <th>Place of Supply</th>
                     <th>Taxable</th>
-                    <th>Tax Rate</th>
-                    <th>Tax</th>
+                    <th>Rate</th>
+                    <th>CGST</th>
+                    <th>SGST</th>
+                    <th>IGST</th>
                 </tr>
             </thead>
             <tbody>
@@ -84,16 +100,18 @@
                             <td><?php echo $item->invoice_number; ?></td>
                             <td><?php echo $item->customer_name; ?></td>
                             <td><?php echo $item->gstin ?: 'N/A'; ?></td>
-                            <td><?php echo $item->item_name; ?></td>
+                            <td><?php echo $item->customer_state ?: 'N/A'; ?></td>
                             <td><?php echo $currency_symbol; ?>         <?php echo number_format($item->quantity * $item->price, 2); ?>
                             </td>
                             <td><?php echo $item->tax_rate; ?>%</td>
-                            <td><?php echo $currency_symbol; ?>         <?php echo number_format($item->tax_amount, 2); ?></td>
+                            <td><?php echo $currency_symbol; ?>         <?php echo number_format($item->cgst_amount, 2); ?></td>
+                            <td><?php echo $currency_symbol; ?>         <?php echo number_format($item->sgst_amount, 2); ?></td>
+                            <td><?php echo $currency_symbol; ?>         <?php echo number_format($item->igst_amount, 2); ?></td>
                         </tr>
                     <?php endforeach; ?>
                 <?php else: ?>
                     <tr>
-                        <td colspan="8" style="text-align: center; color: var(--text-light);">No transactions found.</td>
+                        <td colspan="10" style="text-align: center; color: var(--text-light);">No transactions found.</td>
                     </tr>
                 <?php endif; ?>
             </tbody>

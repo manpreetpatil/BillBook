@@ -163,4 +163,36 @@ class Auth extends CI_Controller
         $this->session->set_flashdata('success', 'You have been logged out successfully.');
         redirect('auth/login');
     }
+    public function seed()
+    {
+        $this->load->model('Auth_model');
+
+        $email = 'admin@example.com';
+        $password = 'password';
+
+        $existing_user = $this->Auth_model->get_user_by_email($email);
+
+        if ($existing_user) {
+            echo "User {$email} already exists. Updating password...<br>";
+            $update_data = ['password_hash' => password_hash($password, PASSWORD_BCRYPT)];
+            $this->db->where('email', $email);
+            $this->db->update('users', $update_data);
+            echo "Password updated to '{$password}'.";
+        } else {
+            $data = [
+                'name' => 'Admin User',
+                'email' => $email,
+                'password' => $password,
+                'role' => 'admin',
+                'email_verified' => 1,
+                'provider' => 'email'
+            ];
+
+            if ($this->Auth_model->create_staff_user($data)) {
+                echo "User {$email} created successfully with password '{$password}'.";
+            } else {
+                echo "Failed to create user.";
+            }
+        }
+    }
 }

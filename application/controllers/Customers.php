@@ -71,6 +71,7 @@ class Customers extends MY_Controller
                     'email' => $this->input->post('email'),
                     'phone' => $this->input->post('phone'),
                     'address' => $this->input->post('address'),
+                    'state' => $this->input->post('state'),
                     'gstin' => $this->input->post('gstin')
                 ];
 

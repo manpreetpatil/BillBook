@@ -32,6 +32,8 @@ class Invoices extends MY_Controller
 
         $data['title'] = 'Create Invoice';
         $user_id = $this->session->userdata('user_id');
+        $this->load->model('Settings_model');
+        $data['settings'] = $this->Settings_model->get_settings($user_id);
         $data['customers'] = $this->Customers_model->get_all_customers($user_id);
         $data['items'] = $this->Items_model->get_all_items($user_id);
         $data['invoice_number'] = $this->Invoices_model->generate_invoice_number($user_id);
@@ -70,6 +72,12 @@ class Invoices extends MY_Controller
                             'price' => $price,
                             'tax_rate' => $tax_rate,
                             'tax_amount' => $tax_amount,
+                            'cgst_rate' => $this->input->post('cgst_rate')[$i] ?? 0,
+                            'cgst_amount' => $this->input->post('cgst_amount')[$i] ?? 0,
+                            'sgst_rate' => $this->input->post('sgst_rate')[$i] ?? 0,
+                            'sgst_amount' => $this->input->post('sgst_amount')[$i] ?? 0,
+                            'igst_rate' => $this->input->post('igst_rate')[$i] ?? 0,
+                            'igst_amount' => $this->input->post('igst_amount')[$i] ?? 0,
                             'total' => $item_total + $tax_amount
                         ];
                     }
@@ -82,6 +90,9 @@ class Invoices extends MY_Controller
                     'due_date' => $this->input->post('due_date'),
                     'subtotal' => $subtotal,
                     'tax_total' => $tax_total,
+                    'cgst_amount' => $this->input->post('total_cgst') ?? 0,
+                    'sgst_amount' => $this->input->post('total_sgst') ?? 0,
+                    'igst_amount' => $this->input->post('total_igst') ?? 0,
                     'grand_total' => $subtotal + $tax_total,
                     'notes' => $this->input->post('notes')
                 ];

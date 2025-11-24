@@ -204,6 +204,7 @@
             <thead>
                 <tr>
                     <th>Item</th>
+                    <th>HSN/SAC</th>
                     <th>Qty</th>
                     <th>Price</th>
                     <th>Tax Rate</th>
@@ -220,6 +221,7 @@
                                 <div style="font-size: 0.85rem; color: #64748b;"><?php echo $item->description; ?></div>
                             <?php endif; ?>
                         </td>
+                        <td><?php echo isset($item->hsn_sac) ? $item->hsn_sac : '-'; ?></td>
                         <td><?php echo $item->quantity; ?></td>
                         <td><?php echo $currency_symbol; ?>     <?php echo number_format($item->price, 2); ?></td>
                         <td><?php echo $item->tax_rate; ?>%</td>
@@ -236,10 +238,23 @@
                 <span>Subtotal:</span>
                 <span><?php echo $currency_symbol; ?> <?php echo number_format($invoice->subtotal, 2); ?></span>
             </div>
-            <div class="totals-row">
-                <span>Tax:</span>
-                <span><?php echo $currency_symbol; ?> <?php echo number_format($invoice->tax_total, 2); ?></span>
-            </div>
+
+            <?php if ($invoice->igst_amount > 0): ?>
+                <div class="totals-row">
+                    <span>IGST:</span>
+                    <span><?php echo $currency_symbol; ?>     <?php echo number_format($invoice->igst_amount, 2); ?></span>
+                </div>
+            <?php else: ?>
+                <div class="totals-row">
+                    <span>CGST:</span>
+                    <span><?php echo $currency_symbol; ?>     <?php echo number_format($invoice->cgst_amount, 2); ?></span>
+                </div>
+                <div class="totals-row">
+                    <span>SGST:</span>
+                    <span><?php echo $currency_symbol; ?>     <?php echo number_format($invoice->sgst_amount, 2); ?></span>
+                </div>
+            <?php endif; ?>
+
             <div class="totals-row grand">
                 <span>Grand Total:</span>
                 <span><?php echo $currency_symbol; ?> <?php echo number_format($invoice->grand_total, 2); ?></span>

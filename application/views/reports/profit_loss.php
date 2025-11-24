@@ -2,6 +2,10 @@
     <div class="card-header">
         <div class="card-title">Profit & Loss Report</div>
         <div>
+            <a href="<?php echo site_url('reports/profit_loss_csv?start_date=' . $start_date . '&end_date=' . $end_date); ?>"
+                class="btn btn-primary" style="margin-right: 8px;">
+                <i class="fas fa-download" style="margin-right: 8px;"></i> Download CSV
+            </a>
             <button class="btn btn-outline" onclick="window.print()">
                 <i class="fas fa-print" style="margin-right: 8px;"></i> Print
             </button>

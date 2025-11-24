@@ -72,6 +72,10 @@
             <textarea name="notes" class="form-control" rows="3"></textarea>
         </div>
 
+        <input type="hidden" name="total_cgst" id="total_cgst" value="0">
+        <input type="hidden" name="total_sgst" id="total_sgst" value="0">
+        <input type="hidden" name="total_igst" id="total_igst" value="0">
+
         <div style="display: flex; gap: 12px;">
             <button type="submit" class="btn btn-primary">
                 <i class="fas fa-save" style="margin-right: 8px;"></i> Create Invoice
@@ -83,6 +87,8 @@
 
 <script>
     const items = <?php echo json_encode($items); ?>;
+    const customers = <?php echo json_encode($customers); ?>;
+    const companyState = "<?php echo isset($settings->state) ? $settings->state : ''; ?>";
     let itemCounter = 0;
 
     function addInvoiceItem() {
@@ -97,9 +103,16 @@
             <label class="form-label">Item</label>
             <select name="item_id[]" class="form-control item-select" onchange="selectItem(this, ${itemCounter})">
                 <option value="">Select Item</option>
-                ${items.map(item => `<option value="${item.id}" data-price="${item.price}" data-tax="${item.tax_rate}" data-description="${item.description || ''}">${item.name}</option>`).join('')}
+                ${items.map(item => `<option value="${item.id}" data-price="${item.price}" data-tax="${item.tax_rate}" data-tax-type="${item.tax_type}" data-description="${item.description || ''}">${item.name}</option>`).join('')}
             </select>
             <input type="hidden" name="item_name[]" class="item-name">
+            <input type="hidden" name="tax_type[]" class="tax-type">
+            <input type="hidden" name="cgst_rate[]" class="cgst-rate">
+            <input type="hidden" name="cgst_amount[]" class="cgst-amount">
+            <input type="hidden" name="sgst_rate[]" class="sgst-rate">
+            <input type="hidden" name="sgst_amount[]" class="sgst-amount">
+            <input type="hidden" name="igst_rate[]" class="igst-rate">
+            <input type="hidden" name="igst_amount[]" class="igst-amount">
             <input type="text" name="description[]" class="form-control item-description" placeholder="Description (Optional)" style="margin-top: 4px; font-size: 0.85rem;">
         </div>
         <div class="form-group" style="margin-bottom: 0;">
@@ -135,6 +148,7 @@
             itemDiv.querySelector('.price').value = option.dataset.price || 0;
             itemDiv.querySelector('.tax-rate').value = option.dataset.tax || 0;
             itemDiv.querySelector('.item-name').value = option.text;
+            itemDiv.querySelector('.tax-type').value = option.dataset.taxType || 'exclusive';
             itemDiv.querySelector('.item-description').value = option.dataset.description || '';
         }
 
@@ -149,28 +163,80 @@
     function calculateTotals() {
         let subtotal = 0;
         let taxTotal = 0;
+        let cgstTotal = 0;
+        let sgstTotal = 0;
+        let igstTotal = 0;
+
+        const customerId = document.querySelector('select[name="customer_id"]').value;
+        const customer = customers.find(c => c.id == customerId);
+        const customerState = customer ? customer.state : '';
+        const isInterState = companyState && customerState && (companyState.toLowerCase() !== customerState.toLowerCase());
 
         document.querySelectorAll('.invoice-item').forEach(item => {
             const quantity = parseFloat(item.querySelector('.quantity').value) || 0;
-            const price = parseFloat(item.querySelector('.price').value) || 0;
+            let price = parseFloat(item.querySelector('.price').value) || 0;
             const taxRate = parseFloat(item.querySelector('.tax-rate').value) || 0;
+            const taxType = item.querySelector('.tax-type').value || 'exclusive';
 
-            const lineTotal = quantity * price;
-            const taxAmount = (lineTotal * taxRate) / 100;
-            const total = lineTotal + taxAmount;
+            let taxableValue = 0;
+            let taxAmount = 0;
 
+            if (taxType === 'inclusive') {
+                taxableValue = (price * quantity * 100) / (100 + taxRate);
+                taxAmount = (price * quantity) - taxableValue;
+            } else {
+                taxableValue = price * quantity;
+                taxAmount = (taxableValue * taxRate) / 100;
+            }
+
+            const total = taxableValue + taxAmount;
             item.querySelector('.item-total').value = `<?php echo $currency_symbol; ?> ${total.toFixed(2)}`;
 
-            subtotal += lineTotal;
+            subtotal += taxableValue;
             taxTotal += taxAmount;
+
+            if (isInterState) {
+                igstTotal += taxAmount;
+                item.querySelector('.igst-rate').value = taxRate;
+                item.querySelector('.igst-amount').value = taxAmount.toFixed(2);
+                item.querySelector('.cgst-rate').value = 0;
+                item.querySelector('.cgst-amount').value = 0;
+                item.querySelector('.sgst-rate').value = 0;
+                item.querySelector('.sgst-amount').value = 0;
+            } else {
+                cgstTotal += taxAmount / 2;
+                sgstTotal += taxAmount / 2;
+                item.querySelector('.cgst-rate').value = taxRate / 2;
+                item.querySelector('.cgst-amount').value = (taxAmount / 2).toFixed(2);
+                item.querySelector('.sgst-rate').value = taxRate / 2;
+                item.querySelector('.sgst-amount').value = (taxAmount / 2).toFixed(2);
+                item.querySelector('.igst-rate').value = 0;
+                item.querySelector('.igst-amount').value = 0;
+            }
         });
 
         const grandTotal = subtotal + taxTotal;
 
         document.getElementById('subtotal').textContent = `<?php echo $currency_symbol; ?> ${subtotal.toFixed(2)}`;
-        document.getElementById('tax').textContent = `<?php echo $currency_symbol; ?> ${taxTotal.toFixed(2)}`;
+
+        let taxHtml = '';
+        if (isInterState) {
+            taxHtml = `IGST: <?php echo $currency_symbol; ?> ${igstTotal.toFixed(2)}`;
+        } else {
+            taxHtml = `CGST: <?php echo $currency_symbol; ?> ${cgstTotal.toFixed(2)} <br> SGST: <?php echo $currency_symbol; ?> ${sgstTotal.toFixed(2)}`;
+        }
+        document.getElementById('tax').innerHTML = taxHtml;
+
         document.getElementById('grandTotal').textContent = `<?php echo $currency_symbol; ?> ${grandTotal.toFixed(2)}`;
+
+        // Update hidden total fields
+        document.getElementById('total_cgst').value = cgstTotal.toFixed(2);
+        document.getElementById('total_sgst').value = sgstTotal.toFixed(2);
+        document.getElementById('total_igst').value = igstTotal.toFixed(2);
     }
+
+    // Add listener for customer change to recalculate taxes (Inter/Intra state)
+    document.querySelector('select[name="customer_id"]').addEventListener('change', calculateTotals);
 
     // Add first item by default
     addInvoiceItem();

@@ -9,8 +9,6 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 |
 */
 
-
-
 $config['firebase'] = [
     'apiKey' => "AIzaSyAjm9pmibSkJrYXL8JAvM_zsgGvk8jFAxw",
     'authDomain' => "billbook-b8cbd.firebaseapp.com",
