@@ -52,4 +52,14 @@ class Items_model extends CI_Model
         $this->db->where('user_id', $user_id);
         return $this->db->delete('items');
     }
+
+    /**
+     * Get count of items with low stock
+     */
+    public function get_low_stock_count($user_id, $threshold = 5)
+    {
+        $this->db->where('user_id', $user_id);
+        $this->db->where('current_stock <=', $threshold);
+        return $this->db->count_all_results('items');
+    }
 }

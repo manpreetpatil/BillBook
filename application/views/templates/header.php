@@ -26,14 +26,27 @@
                 class="nav-item <?php echo ($this->uri->segment(1) == 'dashboard' || $this->uri->segment(1) == '') ? 'active' : ''; ?>">
                 <div class="nav-icon"><i class="fas fa-home"></i></div> Dashboard
             </a>
+
+            <a href="<?php echo site_url('invoices'); ?>"
+                class="nav-item <?php echo ($this->uri->segment(1) == 'invoices') ? 'active' : ''; ?>">
+                <div class="nav-icon"><i class="fas fa-file-invoice-dollar"></i></div> Invoices
+            </a>
+
+            <a href="<?php echo site_url('payments'); ?>"
+                class="nav-item <?php echo ($this->uri->segment(1) == 'payments') ? 'active' : ''; ?>">
+                <div class="nav-icon"><i class="fas fa-money-bill-wave"></i></div> Payments
+            </a>
+
             <a href="<?php echo site_url('customers'); ?>"
                 class="nav-item <?php echo ($this->uri->segment(1) == 'customers') ? 'active' : ''; ?>">
                 <div class="nav-icon"><i class="fas fa-users"></i></div> Customers
             </a>
+
             <a href="<?php echo site_url('items'); ?>"
                 class="nav-item <?php echo ($this->uri->segment(1) == 'items') ? 'active' : ''; ?>">
                 <div class="nav-icon"><i class="fas fa-box"></i></div> Items
             </a>
+
             <!-- Inventory Management Dropdown -->
             <?php
             $inventory_segments = ['suppliers', 'purchases', 'inventory_reports'];
@@ -60,18 +73,7 @@
                     All Inventory
                 </a>
             </div>
-            <a href="<?php echo site_url('invoices'); ?>"
-                class="nav-item <?php echo ($this->uri->segment(1) == 'invoices') ? 'active' : ''; ?>">
-                <div class="nav-icon"><i class="fas fa-file-invoice-dollar"></i></div> Invoices
-            </a>
-            <a href="<?php echo site_url('payments'); ?>"
-                class="nav-item <?php echo ($this->uri->segment(1) == 'payments') ? 'active' : ''; ?>">
-                <div class="nav-icon"><i class="fas fa-money-bill-wave"></i></div> Payments
-            </a>
-            <a href="<?php echo site_url('reports'); ?>"
-                class="nav-item <?php echo ($this->uri->segment(1) == 'reports') ? 'active' : ''; ?>">
-                <div class="nav-icon"><i class="fas fa-chart-bar"></i></div> Reports
-            </a>
+
             <!-- Expenses Dropdown -->
             <?php
             $expense_segments = ['expenses', 'reports/profit_loss'];
@@ -99,9 +101,9 @@
                 </a>
             </div>
 
-            <a href="<?php echo site_url('settings'); ?>"
-                class="nav-item <?php echo ($this->uri->segment(1) == 'settings') ? 'active' : ''; ?>">
-                <div class="nav-icon"><i class="fas fa-cog"></i></div> Settings
+            <a href="<?php echo site_url('reports'); ?>"
+                class="nav-item <?php echo ($this->uri->segment(1) == 'reports' && $this->uri->segment(2) == '') ? 'active' : ''; ?>">
+                <div class="nav-icon"><i class="fas fa-chart-bar"></i></div> Reports
             </a>
 
             <?php if ($this->session->userdata('role') === 'admin'): ?>
@@ -110,6 +112,11 @@
                     <div class="nav-icon"><i class="fas fa-user-shield"></i></div> Users & Roles
                 </a>
             <?php endif; ?>
+
+            <a href="<?php echo site_url('settings'); ?>"
+                class="nav-item <?php echo ($this->uri->segment(1) == 'settings') ? 'active' : ''; ?>">
+                <div class="nav-icon"><i class="fas fa-cog"></i></div> Settings
+            </a>
         </div>
     </div>
 
