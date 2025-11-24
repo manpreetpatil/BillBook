@@ -53,6 +53,9 @@ class Invoices_model extends CI_Model
         foreach ($items_data as $item) {
             $item['invoice_id'] = $invoice_id;
             $this->db->insert('invoice_items', $item);
+
+            // Deduct stock (FIFO)
+            $this->_deduct_stock($item['item_id'], $item['quantity'], $user_id, $invoice_id);
         }
 
         $this->db->trans_complete();
@@ -141,5 +144,60 @@ class Invoices_model extends CI_Model
         $this->db->where('id', $invoice_id);
         $this->db->where('user_id', $user_id);
         return $this->db->update('invoices', ['status' => $status]);
+    }
+
+    /**
+     * Deduct stock using FIFO logic
+     */
+    private function _deduct_stock($item_id, $quantity, $user_id, $invoice_id)
+    {
+        // 1. Get batches ordered by expiry (ASC) and creation (ASC)
+        $this->db->where('item_id', $item_id);
+        $this->db->where('quantity >', 0);
+        $this->db->order_by('expiry_date', 'ASC'); // First expiring first
+        $this->db->order_by('created_at', 'ASC');  // Oldest stock first
+        $batches = $this->db->get('item_batches')->result();
+
+        $qty_to_deduct = $quantity;
+
+        foreach ($batches as $batch) {
+            if ($qty_to_deduct <= 0)
+                break;
+
+            $deducted = 0;
+            if ($batch->quantity >= $qty_to_deduct) {
+                // This batch has enough stock
+                $deducted = $qty_to_deduct;
+                $new_batch_qty = $batch->quantity - $qty_to_deduct;
+                $qty_to_deduct = 0;
+            } else {
+                // Take all from this batch
+                $deducted = $batch->quantity;
+                $new_batch_qty = 0;
+                $qty_to_deduct -= $batch->quantity;
+            }
+
+            // Update batch quantity
+            $this->db->where('id', $batch->id);
+            $this->db->update('item_batches', ['quantity' => $new_batch_qty]);
+        }
+
+        // 2. Update total item stock
+        $this->db->set('current_stock', 'current_stock - ' . (float) $quantity, FALSE);
+        $this->db->where('id', $item_id);
+        $this->db->update('items');
+
+        // 3. Log movement
+        $log_data = [
+            'user_id' => $user_id,
+            'item_id' => $item_id,
+            'type' => 'OUT',
+            'quantity' => $quantity,
+            'reference_type' => 'Invoice',
+            'reference_id' => $invoice_id,
+            'date' => date('Y-m-d'),
+            'notes' => 'Invoice Creation'
+        ];
+        $this->db->insert('inventory_logs', $log_data);
     }
 }

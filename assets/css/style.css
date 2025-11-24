@@ -109,6 +109,35 @@ body {
     text-align: center;
 }
 
+.nav-submenu {
+    display: none;
+    background-color: #f8fafc;
+    padding: 8px 0;
+}
+
+.nav-submenu.show {
+    display: block;
+}
+
+.nav-submenu .nav-item {
+    padding-left: 56px;
+    font-size: 0.95rem;
+}
+
+.nav-item-parent {
+    justify-content: space-between;
+    cursor: pointer;
+}
+
+.nav-item-parent .fa-chevron-down {
+    transition: transform 0.3s;
+    font-size: 0.8rem;
+}
+
+.nav-item-parent.active .fa-chevron-down {
+    transform: rotate(180deg);
+}
+
 /* Main Content */
 .main-content {
     flex: 1;

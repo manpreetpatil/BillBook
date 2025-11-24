@@ -34,6 +34,32 @@
                 class="nav-item <?php echo ($this->uri->segment(1) == 'items') ? 'active' : ''; ?>">
                 <div class="nav-icon"><i class="fas fa-box"></i></div> Items
             </a>
+            <!-- Inventory Management Dropdown -->
+            <?php
+            $inventory_segments = ['suppliers', 'purchases', 'inventory_reports'];
+            $is_inventory_active = in_array($this->uri->segment(1), $inventory_segments);
+            ?>
+            <div class="nav-item nav-item-parent <?php echo $is_inventory_active ? 'active' : ''; ?>"
+                onclick="toggleSubmenu('inventorySubmenu')">
+                <div style="display: flex; align-items: center;">
+                    <div class="nav-icon"><i class="fas fa-warehouse"></i></div> Inventory
+                </div>
+                <i class="fas fa-chevron-down"></i>
+            </div>
+            <div class="nav-submenu <?php echo $is_inventory_active ? 'show' : ''; ?>" id="inventorySubmenu">
+                <a href="<?php echo site_url('suppliers'); ?>"
+                    class="nav-item <?php echo ($this->uri->segment(1) == 'suppliers') ? 'active' : ''; ?>">
+                    Suppliers
+                </a>
+                <a href="<?php echo site_url('purchases'); ?>"
+                    class="nav-item <?php echo ($this->uri->segment(1) == 'purchases') ? 'active' : ''; ?>">
+                    Purchases
+                </a>
+                <a href="<?php echo site_url('inventory_reports/stock'); ?>"
+                    class="nav-item <?php echo ($this->uri->segment(1) == 'inventory_reports') ? 'active' : ''; ?>">
+                    All Inventory
+                </a>
+            </div>
             <a href="<?php echo site_url('invoices'); ?>"
                 class="nav-item <?php echo ($this->uri->segment(1) == 'invoices') ? 'active' : ''; ?>">
                 <div class="nav-icon"><i class="fas fa-file-invoice-dollar"></i></div> Invoices
@@ -111,11 +137,20 @@
 
             // Close mobile menu when clicking nav item
             document.querySelectorAll('.nav-item').forEach(item => {
-                item.addEventListener('click', function() {
-                    if (window.innerWidth <= 768) {
-                        toggleMobileMenu();
-                    }
-                });
+                if (!item.classList.contains('nav-item-parent')) {
+                    item.addEventListener('click', function () {
+                        if (window.innerWidth <= 768) {
+                            toggleMobileMenu();
+                        }
+                    });
+                }
             });
+
+            function toggleSubmenu(id) {
+                const submenu = document.getElementById(id);
+                const parent = submenu.previousElementSibling;
+                submenu.classList.toggle('show');
+                parent.classList.toggle('active');
+            }
         </script>
         <div class="content">
