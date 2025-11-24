@@ -10,6 +10,7 @@ class Invoices extends MY_Controller
         $this->load->model('Invoices_model');
         $this->load->model('Customers_model');
         $this->load->model('Items_model');
+        $this->load->helper('permission');
     }
 
     public function index()
@@ -25,6 +26,10 @@ class Invoices extends MY_Controller
 
     public function create()
     {
+        if (!check_permission('create_invoice')) {
+            show_error('Access Denied', 403);
+        }
+
         $data['title'] = 'Create Invoice';
         $user_id = $this->session->userdata('user_id');
         $data['customers'] = $this->Customers_model->get_all_customers($user_id);
@@ -84,6 +89,7 @@ class Invoices extends MY_Controller
                 $invoice_id = $this->Invoices_model->create_invoice($invoice_data, $items_data, $user_id);
 
                 if ($invoice_id) {
+                    log_activity('Create Invoice', 'Created Invoice #' . $this->input->post('invoice_number'));
                     $this->session->set_flashdata('success', 'Invoice created successfully!');
                     redirect('invoices/view/' . $invoice_id);
                 } else {
@@ -135,8 +141,14 @@ class Invoices extends MY_Controller
 
     public function delete($id)
     {
+        if (!check_permission('delete_invoice')) {
+            $this->session->set_flashdata('error', 'Access Denied: You do not have permission to delete invoices.');
+            redirect('invoices');
+        }
+
         $user_id = $this->session->userdata('user_id');
         if ($this->Invoices_model->delete_invoice($id, $user_id)) {
+            log_activity('Delete Invoice', 'Deleted Invoice ID: ' . $id);
             $this->session->set_flashdata('success', 'Invoice deleted successfully!');
         } else {
             $this->session->set_flashdata('error', 'Failed to delete invoice.');

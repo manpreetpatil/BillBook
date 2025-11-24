@@ -103,6 +103,13 @@
                 class="nav-item <?php echo ($this->uri->segment(1) == 'settings') ? 'active' : ''; ?>">
                 <div class="nav-icon"><i class="fas fa-cog"></i></div> Settings
             </a>
+
+            <?php if ($this->session->userdata('role') === 'admin'): ?>
+                <a href="<?php echo site_url('users'); ?>"
+                    class="nav-item <?php echo ($this->uri->segment(1) == 'users') ? 'active' : ''; ?>">
+                    <div class="nav-icon"><i class="fas fa-user-shield"></i></div> Users & Roles
+                </a>
+            <?php endif; ?>
         </div>
     </div>
 

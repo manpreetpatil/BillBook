@@ -17,10 +17,38 @@ class Auth_model extends CI_Model
             $this->db->where('firebase_uid', $firebase_uid);
             return $this->db->update('users', $data);
         } else {
-            // Create new user
+            // Create new user (Admin by default for Firebase login)
             $data['firebase_uid'] = $firebase_uid;
+            $data['role'] = 'admin'; // Default role for Firebase users
             return $this->db->insert('users', $data);
         }
+    }
+
+    /**
+     * Create a staff user
+     */
+    public function create_staff_user($data)
+    {
+        // Hash password
+        if (isset($data['password'])) {
+            $data['password_hash'] = password_hash($data['password'], PASSWORD_BCRYPT);
+            unset($data['password']);
+        }
+        return $this->db->insert('users', $data);
+    }
+
+    /**
+     * Verify password for staff login
+     */
+    public function verify_password($email, $password)
+    {
+        $user = $this->get_user_by_email($email);
+        if ($user && $user->password_hash) {
+            if (password_verify($password, $user->password_hash)) {
+                return $user;
+            }
+        }
+        return false;
     }
 
     /**

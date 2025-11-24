@@ -9,6 +9,7 @@ class Auth extends CI_Controller
         parent::__construct();
         $this->load->model('Auth_model');
         $this->config->load('firebase');
+        $this->load->helper('permission'); // Load permission helper
     }
 
     /**
@@ -24,6 +25,40 @@ class Auth extends CI_Controller
         $data['title'] = 'Login';
         $data['firebase_config'] = $this->config->item('firebase');
         $this->load->view('auth/login', $data);
+    }
+
+    public function login_staff()
+    {
+        if ($this->session->userdata('user_id')) {
+            redirect('dashboard');
+        }
+
+        if ($this->input->post()) {
+            $email = $this->input->post('email');
+            $password = $this->input->post('password');
+
+            $user = $this->Auth_model->verify_password($email, $password);
+
+            if ($user) {
+                // Set session data
+                $session_data = [
+                    'user_id' => $user->id, // This user's ID
+                    'owner_id' => $user->owner_id, // The Admin's ID (for data scoping)
+                    'role' => $user->role,
+                    'user_name' => $user->name,
+                    'user_email' => $user->email,
+                    'logged_in' => TRUE
+                ];
+                $this->session->set_userdata($session_data);
+                log_activity('Login', 'Staff logged in');
+                redirect('dashboard');
+            } else {
+                $this->session->set_flashdata('error', 'Invalid email or password');
+            }
+        }
+
+        $data['title'] = 'Staff Login';
+        $this->load->view('auth/login_staff', $data);
     }
 
     /**
@@ -102,6 +137,8 @@ class Auth extends CI_Controller
             // Set session data
             $session_data = [
                 'user_id' => $user->id,
+                'owner_id' => $user->id, // Admin is their own owner
+                'role' => $user->role ?? 'admin', // Default to admin if not set
                 'firebase_uid' => $user->firebase_uid,
                 'user_name' => $user->name,
                 'user_email' => $user->email,
@@ -109,6 +146,7 @@ class Auth extends CI_Controller
                 'logged_in' => TRUE
             ];
             $this->session->set_userdata($session_data);
+            log_activity('Login', 'Admin logged in via Firebase');
 
             echo json_encode(['success' => true, 'message' => 'Login successful']);
         } else {
